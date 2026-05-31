@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - 'lab1/**'
-      - '.github/workflows/terraform-prod.yml'
   pull_request:
     branches:
       - main
