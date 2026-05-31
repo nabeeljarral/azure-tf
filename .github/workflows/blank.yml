@@ -4,39 +4,34 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'lab1/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'lab1/**'
 
 permissions:
   id-token: write
   contents: read
-  pull-requests: write
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
     environment: PROD
 
     defaults:
       run:
         working-directory: lab1
 
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }} 
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_USE_OIDC: "true"
-      ARM_OIDC_TOKEN: ${{ github.token }}
-
     steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
@@ -47,32 +42,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Upload Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: lab1/tfplan
-          retention-days: 5
-
-      - name: Comment PR with Plan
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const { execSync } = require('child_process');
-            const plan = execSync('cd lab1 && terraform show -no-color tfplan', { encoding: 'utf-8' });
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## Terraform Plan\n\`\`\`\n${plan}\n\`\`\``
-            });
-
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve tfplan
-
-      - name: Terraform Output
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform output -json
+  #    - name: Terraform Apply
+  #      if: github.ref == 'refs/heads/main'
+  #      run: terraform apply -auto-approve tfplan
