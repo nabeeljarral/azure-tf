@@ -1,5 +1,4 @@
 name: Terraform PROD
-
 on:
   push:
     branches:
