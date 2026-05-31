@@ -8,18 +8,15 @@ on:
 permissions:
   id-token: write
   contents: read
-defaults:
-      run:
-        working-directory: lab1
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
     environment: PROD
 
-    permissions:
-      id-token: write
-      contents: read
+    defaults:
+      run:
+        working-directory: lab1
 
     env:
       ARM_USE_OIDC: "true"
@@ -28,10 +25,17 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - run: terraform init
-      - run: terraform validate
-      - run: terraform plan -out=tfplan
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
