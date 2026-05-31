@@ -35,12 +35,18 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        env:
+        ARM_USE_OIDC: true
 
       - name: Terraform Validate
         run: terraform validate
+        env:
+        ARM_USE_OIDC: true
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+        env:
+        ARM_USE_OIDC: true
 
   #    - name: Terraform Apply
   #      if: github.ref == 'refs/heads/main'
