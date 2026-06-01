@@ -20,6 +20,6 @@ resource "azurerm_storage_account" "mysa" {
   account_replication_type = "LRS"
 
   tags = {
-    environment = "PROD"
+    Environment = "PROD"
   }
 }
