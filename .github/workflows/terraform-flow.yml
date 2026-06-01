@@ -3,7 +3,7 @@ name: Terraform PROD
 on:
   push:
     branches:
-      - main
+      - dev
 
 permissions:
   id-token: write
