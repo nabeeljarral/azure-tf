@@ -1,4 +1,4 @@
-name: Terraform PROD
+name: Terraform 4-ter structure
 
 on:
   push:
