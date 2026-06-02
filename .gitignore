@@ -3,3 +3,7 @@ lab1/.terraform/
 lab1/*.tfstate
 lab1/*.tfstate.*
 lab1/.terraform.lock.hcl
+4-tier/.terraform/
+4-tier/*.tfstate
+4-tier/*.tfstate.*
+4-tier/.terraform.lock.hcl
